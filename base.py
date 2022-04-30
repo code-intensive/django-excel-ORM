@@ -60,10 +60,14 @@ class DjangoExcelToDB:
     def migrate_to_db(self):
         """Extracts values and pushes them to the database
         """
-        _objects = self._extract_values()
+        _objects = list(self._extract_values())
         self._push_to_db(
-            list(_objects)
+            _objects
         )
+        success_msg = '%d object(s) of %s successfully created and pushed to the database' % (
+            len(_objects), self.model.__class__
+        )
+        print(success_msg)
 
     def _extract_values(self) -> Generator:
         # TODO use a header attribute of array to dynamically get the sheet's
@@ -79,7 +83,4 @@ class DjangoExcelToDB:
         """Populates database with objects created from the
         specified excel sheet
         """
-        try:
-            self.model.objects.bulk_create(_objects)
-        except Exception as e:
-            print(e.with_traceback())
+        self.model.objects.bulk_create(_objects)
