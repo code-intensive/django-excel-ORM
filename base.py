@@ -56,18 +56,37 @@ class DjangoExcelToDB:
             'Kindly define a model attribute - '
             '*(This should be a django models.Model subclass)'
         )
+        print('Ran checks successfully...')
+        
+
+    def __define_dims__(self) -> dict:
+        """Provides the `_extract_values` method
+        the dimensions of data based on the `header`
+        with which the class was instantiated with
+
+        Returns:
+            `dict`: A dictionary containing the location
+            of the worksheet's values:
+            `TOP`, `LEFT` `RIGHT` and  `BOTTOM`
+        """
+        data_dim = {
+            'TOP': 'A',
+            'LEFT': '1',
+            'RIGHT': '10',
+            'BOTTOM': 'x',
+        }
+        # TODO find then row and col dimensions
+        # of the present worksheet, pass it as
+        # a dictionary mapping all four corners
+        # like that of a square or rectangle
+        return data_dim
 
     def migrate_to_db(self):
         """Extracts values and pushes them to the database
         """
         _objects = list(self._extract_values())
-        self._push_to_db(
-            _objects
-        )
-        success_msg = '%d object(s) of %s successfully created and pushed to the database' % (
-            len(_objects), self.model.__class__
-        )
-        print(success_msg)
+        self._push_to_db(_objects)
+        print('Pushed %d object(s) to DB' % len(_objects))
 
     def _extract_values(self) -> Generator:
         # TODO use a header attribute of array to dynamically get the sheet's
